@@ -1,0 +1,208 @@
+fastapi>=0.110,<1.0
+uvicorn[standard]>=0.27,<1.0
+pytest>=8.0,<9.0
+httpx>=0.27,<1.0
+email-validator>=2.3.0,<3.0
+
+# Contact Directory REST API — Debugging & Enhancement
+
+## Project Overview
+
+This project is part of the Vision Orbit Innovations Task 2 REST API Debugging & Enhancement Challenge.
+
+The application is a Contact Directory REST API developed using **Python, FastAPI, and Pydantic**. It supports creating, retrieving, filtering, updating, and deleting contact records.
+
+The objective was to identify and fix defects in the existing application, implement input validation, improve error handling, and verify functionality through automated tests.
+
+## Technologies Used
+
+- Python 3.12
+- FastAPI
+- Pydantic
+- Uvicorn
+- Pytest
+- HTTPX
+
+## API Endpoints
+
+| Method | Endpoint | Description | Success Status |
+|---|---|---|---|
+| GET | `/` | Check API status | 200 |
+| GET | `/contacts` | Retrieve all contacts | 200 |
+| GET | `/contacts?email=...` | Filter contacts by email | 200 |
+| GET | `/contacts/{contact_id}` | Retrieve a specific contact | 200 |
+| POST | `/contacts` | Create a new contact | 201 |
+| PATCH | `/contacts/{contact_id}` | Update an existing contact | 200 |
+| DELETE | `/contacts/{contact_id}` | Delete a contact | 200 |
+
+## Bugs Identified and Fixed
+
+### 1. Incorrect Email Filtering
+
+**Issue:** The email filter returned contacts whose email addresses did not match the requested email.
+
+**Fix:** Corrected the comparison logic to return matching contacts.
+
+### 2. Duplicate Email Handling
+
+**Issue:** The API allowed multiple contacts with the same email address.
+
+**Fix:** Added duplicate email checks during contact creation and email updates. Email comparisons are case-insensitive.
+
+**Error Response:** `409 Conflict`
+
+### 3. Missing Input Validation
+
+**Issue:** Invalid names, email addresses, and phone numbers could be submitted.
+
+**Fix:** Added Pydantic validation rules:
+
+- Name: 2–50 characters
+- Email: Valid email format
+- Phone: Exactly 10 numeric digits
+
+**Error Response:** `422 Unprocessable Entity`
+
+### 4. PATCH Validation and Null Handling
+
+**Issue:** Contact updates required improved validation and protection against invalid values.
+
+**Fix:** Added validation for update requests and prevented explicitly setting contact fields to `null`.
+
+**Error Response:** `422 Unprocessable Entity`
+
+### 5. Incorrect DELETE Error Handling
+
+**Issue:** Deleting a nonexistent contact returned a success response.
+
+**Fix:** Added an existence check before deletion.
+
+**Error Response:** `404 Not Found`
+
+## HTTP Status Codes
+
+| Status Code | Meaning |
+|---|---|
+| 200 | Request completed successfully |
+| 201 | Contact created successfully |
+| 404 | Contact not found |
+| 409 | Duplicate email conflict |
+| 422 | Invalid request data |
+
+## Installation and Setup
+
+### Prerequisites
+
+- Python 3.10 or newer
+- pip
+
+### 1. Clone the Repository
+
+```bash
+git clone <YOUR_GITHUB_REPOSITORY_URL>
+cd <YOUR_REPOSITORY_FOLDER>
+```
+
+Replace the placeholders with the actual GitHub repository URL and folder name after publishing.
+
+### 2. Create a Virtual Environment
+
+**Windows:**
+
+```powershell
+python -m venv venv
+venv\Scripts\activate
+```
+
+**macOS/Linux:**
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 3. Install Dependencies
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+### 4. Start the API
+
+```bash
+python -m uvicorn main:app --reload
+```
+
+### 5. Open API Documentation
+
+Visit:
+
+http://127.0.0.1:8000/docs
+
+The Swagger UI allows users to test all available API endpoints.
+
+## Automated Testing
+
+Automated tests were implemented using **Pytest** and FastAPI's **TestClient**.
+
+### Test Cases
+
+| No. | Test Case | Result |
+|---|---|---|
+| 1 | API health check | Passed |
+| 2 | Retrieve all contacts | Passed |
+| 3 | Create a contact | Passed |
+| 4 | Reject duplicate email during creation | Passed |
+| 5 | Reject invalid contact data | Passed |
+| 6 | Update an existing contact | Passed |
+| 7 | Delete an existing contact | Passed |
+| 8 | Delete a nonexistent contact | Passed |
+| 9 | Retrieve a nonexistent contact | Passed |
+| 10 | Reject duplicate email during update | Passed |
+| 11 | Reject invalid phone number during update | Passed |
+| 12 | Reject null name during update | Passed |
+| 13 | Update a nonexistent contact | Passed |
+| 14 | Filter contacts by email | Passed |
+
+### Run Tests
+
+```bash
+python -m pytest test_main.py -v
+```
+
+### Test Results
+
+```text
+14 passed, 1 warning in 0.73s
+```
+
+All 14 automated tests passed.
+
+The warning was a Starlette TestClient dependency deprecation warning and did not cause test failures.
+
+## Assumptions and Limitations
+
+- Contact records are stored in an in-memory Python dictionary.
+- Data is not persisted after the application restarts.
+- Email addresses must be unique across contacts.
+- Phone numbers must contain exactly 10 digits.
+- The project does not include authentication or a frontend, as these were outside the assessment scope.
+
+## Project Structure
+
+```text
+Contact-Directory-REST-API/
+├── main.py
+├── test_main.py
+├── requirements.txt
+├── README.md
+└── .gitignore
+```
+
+## Conclusion
+
+The Contact Directory REST API was enhanced with corrected filtering logic, duplicate email prevention, input validation, meaningful HTTP error responses, and automated testing.
+
+All 14 automated test cases passed, demonstrating the tested functionality and error-handling behavior.
+
+**Assessment:** Vision Orbit Innovations — Task 2 REST API Debugging & Enhancement Challenge
